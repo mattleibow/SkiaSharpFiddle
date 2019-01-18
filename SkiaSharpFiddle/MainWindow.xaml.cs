@@ -29,7 +29,7 @@ namespace SkiaSharpFiddle
             Observable.FromEventPattern(editor, nameof(editor.TextChanged))
                 .Select(evt => (evt.Sender as TextEditor)?.Text)
                 .Where(text => !string.IsNullOrWhiteSpace(text))
-                .Throttle(TimeSpan.FromMilliseconds(500))
+                .Throttle(TimeSpan.FromMilliseconds(250))
                 .DistinctUntilChanged()
                 .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
@@ -39,9 +39,18 @@ namespace SkiaSharpFiddle
 
             editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
             editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
+
+            VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
+            VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
         }
 
         public MainViewModel ViewModel => DataContext as MainViewModel;
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+        }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -49,6 +58,10 @@ namespace SkiaSharpFiddle
                 e.PropertyName == nameof(MainViewModel.GpuDrawing))
             {
                 preview.InvalidateVisual();
+            }
+            else if (e.PropertyName == nameof(MainViewModel.Mode))
+            {
+                VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
             }
         }
 

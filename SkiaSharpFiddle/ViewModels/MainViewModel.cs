@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using Microsoft.CodeAnalysis;
+using System.Reflection;
+using System.Threading;
 using MvvmHelpers;
 using SkiaSharp;
 
@@ -19,11 +20,15 @@ namespace SkiaSharpFiddle
         private SKImage rasterDrawing;
         private SKImage gpuDrawing;
 
+        private Mode mode = Mode.Ready;
+
+        private CancellationTokenSource cancellation;
+        private CompilationResult lastResult;
+
         public MainViewModel()
         {
             var color = SKImageInfo.PlatformColorType;
             var colorString = color == SKColorType.Bgra8888 ? "BGRA" : "RGBA";
-
             ColorCombinations = new ColorCombination[]
             {
                 new ColorCombination(colorString, color, null),
@@ -32,6 +37,16 @@ namespace SkiaSharpFiddle
             };
 
             CompilationMessages = new ObservableRangeCollection<CompilationMessage>();
+
+            var skiaAss = typeof(SKSurface).Assembly;
+            if (skiaAss.GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)) is AssemblyInformationalVersionAttribute informational)
+                SkiaSharpVersion = informational.InformationalVersion;
+            else if (skiaAss.GetCustomAttribute(typeof(AssemblyFileVersionAttribute)) is AssemblyFileVersionAttribute fileVersion)
+                SkiaSharpVersion = fileVersion.Version;
+            else if (skiaAss.GetCustomAttribute(typeof(AssemblyVersionAttribute)) is AssemblyVersionAttribute version)
+                SkiaSharpVersion = version.Version;
+            else
+                SkiaSharpVersion = "<unknown>";
         }
 
         public ColorCombination[] ColorCombinations { get; }
@@ -41,6 +56,8 @@ namespace SkiaSharpFiddle
         public SKImageInfo ImageInfo => new SKImageInfo(DrawingWidth, DrawingHeight);
 
         public ObservableRangeCollection<CompilationMessage> CompilationMessages { get; }
+
+        public string SkiaSharpVersion { get; }
 
         public string SourceCode
         {
@@ -78,6 +95,12 @@ namespace SkiaSharpFiddle
             private set => SetProperty(ref gpuDrawing, value);
         }
 
+        public Mode Mode
+        {
+            get => mode;
+            private set => SetProperty(ref mode, value);
+        }
+
         private void OnDrawingSizeChanged()
         {
             OnPropertyChanged(nameof(DrawingSize));
@@ -86,14 +109,23 @@ namespace SkiaSharpFiddle
             GenerateDrawings();
         }
 
-        private void OnSourceCodeChanged()
+        private async void OnSourceCodeChanged()
         {
-            CompilationMessages.Clear();
+            cancellation?.Cancel();
+            cancellation = new CancellationTokenSource();
 
-            var diagnostics = compiler.Compile(SourceCode);
+            Mode = Mode.Working;
 
-            var messages = GetCompilationMessages(diagnostics);
-            CompilationMessages.ReplaceRange(messages);
+            try
+            {
+                lastResult = await compiler.CompileAsync(SourceCode, cancellation.Token);
+                CompilationMessages.ReplaceRange(lastResult.CompilationMessages);
+
+                Mode = lastResult.HasErrors ? Mode.Error : Mode.Ready;
+            }
+            catch (OperationCanceledException)
+            {
+            }
 
             GenerateDrawings();
         }
@@ -116,7 +148,7 @@ namespace SkiaSharpFiddle
             var info = ImageInfo;
             using (var surface = SKSurface.Create(info))
             {
-                compiler.Draw(surface, info.Size);
+                Draw(surface, info);
                 RasterDrawing = surface.Snapshot();
             }
 
@@ -125,27 +157,15 @@ namespace SkiaSharpFiddle
 
         private void GenerateGpuDrawing()
         {
+            // TODO: implement offscreen GPU drawing
         }
 
-        private IEnumerable<CompilationMessage> GetCompilationMessages(IEnumerable<Diagnostic> diagnostics)
+        private void Draw(SKSurface surface, SKImageInfo info)
         {
-            diagnostics = diagnostics
-                .Where(d => d.Location.IsInSource)
-                .Where(d => d.Severity == DiagnosticSeverity.Error || d.Severity == DiagnosticSeverity.Warning)
-                .OrderBy(d => d.Severity)
-                .OrderBy(d => d.Location.SourceSpan.Start);
+            var messages = lastResult?.Draw(surface, info.Size);
 
-            foreach (var diag in diagnostics)
-            {
-                yield return new CompilationMessage
-                {
-                    IsError = diag.Severity == DiagnosticSeverity.Error,
-                    Message = $"{diag.Severity.ToString().ToLowerInvariant()} {diag.Id}: {diag.GetMessage()}",
-                    StartOffset = diag.Location.SourceSpan.Start,
-                    EndOffset = diag.Location.SourceSpan.End,
-                    LineNumber = diag.Location.GetMappedLineSpan().Span.Start.Line + 1
-                };
-            }
+            if (messages?.Any() == true)
+                CompilationMessages.ReplaceRange(messages);
         }
     }
 }

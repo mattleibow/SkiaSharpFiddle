@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +49,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>output.ico</ApplicationIcon>
@@ -82,11 +84,16 @@
       <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="Resources\InitialSource.cs" />
-    <Compile Include="ColorCombination.cs" />
-    <Compile Include="CompilationMessage.cs" />
+    <Compile Include="ModeToStatusBarTextConverter.cs" />
+    <Compile Include="ViewModels\ColorCombination.cs" />
+    <Compile Include="Compiler\CompilationExtensions.cs" />
+    <Compile Include="Compiler\CompilationMessage.cs" />
     <Compile Include="CompilationResultsTransformer.cs" />
-    <Compile Include="Compiler.cs" />
-    <Compile Include="MainViewModel.cs" />
+    <Compile Include="Compiler\CompilationMessageSeverity.cs" />
+    <Compile Include="Compiler\CompilationResult.cs" />
+    <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="ViewModels\Mode.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

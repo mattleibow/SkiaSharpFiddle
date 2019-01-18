@@ -7,8 +7,54 @@
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
-        Title="MainWindow" Width="1024" Height="768" WindowStartupLocation="CenterScreen"
+        Title="{Binding SkiaSharpVersion, StringFormat='SkiaSharp Fiddle - {0}', FallbackValue='SkiaSharp Fiddle'}"
+        Width="1024" Height="768" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
         Background="{StaticResource BackgroundBrush}">
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="Modes">
+            <VisualState x:Name="Ready">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" Storyboard.TargetProperty="Background">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ReadyStatusBarBackgroundBrush}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+            <VisualState x:Name="Working">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" Storyboard.TargetProperty="Background">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource WorkingStatusBarBackgroundBrush}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+            <VisualState x:Name="Error">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" Storyboard.TargetProperty="Background">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ErrorStatusBarBackgroundBrush}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+        </VisualStateGroup>
+        <VisualStateGroup x:Name="WindowStates">
+            <VisualState x:Name="Normal">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" Storyboard.TargetProperty="Padding">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource StatusBarNormalPadding}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+            <VisualState x:Name="Minimized">
+            </VisualState>
+            <VisualState x:Name="Maximized">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" Storyboard.TargetProperty="Padding">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource StatusBarMaximizedPadding}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+
 
     <Window.DataContext>
         <local:MainViewModel />
@@ -34,7 +80,7 @@
         <ToolBarTray DockPanel.Dock="Top" Style="{StaticResource ToolbarStyle}">
             <ToolBar>
                 <Label Content="Color: " />
-                <ComboBox Width="100" 
+                <ComboBox Width="100"
                           SelectedItem="{Binding ColorCombination, Mode=TwoWay}"
                           ItemsSource="{Binding ColorCombinations}" DisplayMemberPath="Name" />
                 <Separator />
@@ -44,6 +90,14 @@
                 <TextBox Text="{Binding DrawingHeight, Mode=TwoWay}" Width="100" />
             </ToolBar>
         </ToolBarTray>
+
+        <StatusBar x:Name="statusbar" DockPanel.Dock="Bottom" Style="{StaticResource StatusBarStyle}">
+
+            <StatusBarItem HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding Mode, Converter={StaticResource ModeToStatusBarTextConverter}}" />
+            </StatusBarItem>
+
+        </StatusBar>
 
         <Grid Margin="{StaticResource WindowPadding}">
             <Grid.RowDefinitions>

@@ -1,7 +1,7 @@
 ﻿using System;
 using SkiaSharp;
 
-static void Draw(SKCanvas canvas, int width, int height)
+void Draw(SKCanvas canvas, int width, int height)
 {
 	var p = new SKPaint
 	{

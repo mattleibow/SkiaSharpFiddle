@@ -56,6 +56,11 @@ namespace SkiaSharpFiddle
                 if (spanEnd < lineStart || spanStart > lineEnd)
                     continue;
 
+                if (spanStart < lineStart)
+                    spanStart = lineStart;
+                if (spanEnd > lineEnd)
+                    spanEnd = lineEnd;
+
                 var startColumn = context.VisualLine.GetVisualColumn(spanStart - lineStart);
                 var endColumn = context.VisualLine.GetVisualColumn(spanEnd - lineStart);
 
