@@ -20,6 +20,8 @@ namespace SkiaSharpFiddle
             "mscorlib",
             "System",
             "System.Core",
+            "System.Private.CoreLib",
+            "System.Runtime",
             "SkiaSharp",
         };
 
