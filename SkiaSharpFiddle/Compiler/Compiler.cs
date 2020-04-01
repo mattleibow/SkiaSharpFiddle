@@ -14,26 +14,17 @@ namespace SkiaSharpFiddle
 {
     internal class Compiler
     {
-        private static readonly string[] WhitelistedAssemblies =
-        {
-            "netstandard",
-            "mscorlib",
-            "System",
-            "System.Core",
-            "System.Private.CoreLib",
-            "System.Runtime",
-            "SkiaSharp",
-        };
-
         private readonly CSharpCompilationOptions compilationOptions;
         private readonly CSharpParseOptions parseOptions;
 
         private readonly object referencesLocker = new object();
         private Assembly[] assemblyReferences;
         private MetadataReference[] metadataReferences;
+        private AssemblyLoader assemblyLoader;
 
         public Compiler()
         {
+            assemblyLoader = new AssemblyLoader();
             compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             parseOptions = new CSharpParseOptions(LanguageVersion.Latest, kind: SourceCodeKind.Script);
         }
@@ -45,7 +36,7 @@ namespace SkiaSharpFiddle
                 // load references
                 lock (referencesLocker)
                 {
-                    assemblyReferences = GetReferences().ToArray();
+                    assemblyReferences = assemblyLoader.GetReferences().ToArray();
                     metadataReferences = assemblyReferences.Select(a => MetadataReference.CreateFromFile(a.Location)).ToArray();
                 }
 
@@ -57,11 +48,6 @@ namespace SkiaSharpFiddle
 
             return result;
         }
-
-        private IEnumerable<Assembly> GetReferences() =>
-            AppDomain.CurrentDomain
-                .GetAssemblies()
-                .Where(a => WhitelistedAssemblies.Any(wl => wl.Equals(a.GetName().Name, StringComparison.OrdinalIgnoreCase)));
 
         private CompilationResult CompileSourceCode(SourceText sourceCode, CancellationToken cancellationToken = default)
         {
