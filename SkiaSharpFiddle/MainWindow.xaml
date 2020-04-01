@@ -85,9 +85,9 @@
                           ItemsSource="{Binding ColorCombinations}" DisplayMemberPath="Name" />
                 <Separator />
                 <Label Content="Width: " />
-                <TextBox Text="{Binding DrawingWidth, Mode=TwoWay}" Width="100" />
+                <TextBox Text="{Binding DrawingWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" />
                 <Label Content="Height: " />
-                <TextBox Text="{Binding DrawingHeight, Mode=TwoWay}" Width="100" />
+                <TextBox Text="{Binding DrawingHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" />
             </ToolBar>
         </ToolBarTray>
 
