@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
-using SkiaSharp.Views.Desktop;
+using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
 namespace SkiaSharpFiddle.XF
@@ -23,70 +24,43 @@ namespace SkiaSharpFiddle.XF
             InitializeComponent();
 
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-            ViewModel.CompilationMessages.CollectionChanged += OnCompilationMessagesChanged;
-
-            // Observable.FromEventPattern(editor, nameof(editor.TextChanged))
-            //     .Select(evt => (evt.Sender as TextEditor)?.Text)
-            //     .Where(text => !string.IsNullOrWhiteSpace(text))
-            //     .Throttle(TimeSpan.FromMilliseconds(250))
-            //     .DistinctUntilChanged()
-            //     .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
             _ = LoadInitialSourceAsync();
-
-            // editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
-            //
-            // editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Color.Transparent);
-            // editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
-            //
-            // VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
-            // VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+            
+            VisualStateManager.GoToState(this, ViewModel.Mode.ToString());
         }
 
         public MainViewModel ViewModel => BindingContext as MainViewModel;
-
-        // protected override void OnStateChanged(EventArgs e)
-        // {
-        //     base.OnStateChanged(e);
-        //     VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
-        // }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MainViewModel.RasterDrawing) ||
                 e.PropertyName == nameof(MainViewModel.GpuDrawing))
             {
-                // preview.InvalidateVisual();
+                preview.InvalidateSurface();
             }
             else if (e.PropertyName == nameof(MainViewModel.Mode))
             {
-                // VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
+                VisualStateManager.GoToState(this, ViewModel.Mode.ToString());
             }
-        }
-
-        private void OnCompilationMessagesChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            // editor.TextArea.TextView.Redraw();
         }
 
         private async Task LoadInitialSourceAsync()
         {
-            var type = typeof(MainWindow);
-            var assembly = type.Assembly;
+            var assembly = typeof(MainViewModel).Assembly;
+            var resource = $"{typeof(MainViewModel).Namespace.Split(".")[0]}.Resources.InitialSource.cs";
 
-            var resource = $"{type.Namespace}.Resources.InitialSource.cs";
-
-            using (var stream = assembly.GetManifestResourceStream(resource))
+            using var stream = assembly.GetManifestResourceStream(resource);
             using (var reader = new StreamReader(stream))
             {
-                // editor.Text = await reader.ReadToEndAsync();
+                editor.Text = await reader.ReadToEndAsync();
             }
         }
 
-        private void OnPaintSurface(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
+        private void Canvas_OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
-            // var scale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
-            var scale = 1.0f;
+            var self = sender as SKCanvasView;
+            var scale = self.CanvasSize.Width / self.Width;
             var width = e.Info.Width;
             var height = e.Info.Height;
 
@@ -120,6 +94,14 @@ namespace SkiaSharpFiddle.XF
 
                 canvas.DrawRect(SKRect.Create(width + blockSize, height + blockSize), paint);
             }
+        }
+
+        private void Editor_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var source = e.NewTextValue;
+            if (string.IsNullOrWhiteSpace(source))
+                return;
+            ViewModel.SourceCode = source;
         }
     }
 }

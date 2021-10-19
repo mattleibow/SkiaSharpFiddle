@@ -8,7 +8,7 @@
         public string Message { get; set; }
 
         public string DisplayMessage =>
-            $"{(LineNumber != 0 ? $"[{LineNumber}]" : string.Empty)}{Severity.ToString().ToLowerInvariant()}: {Message}";
+            $"{(LineNumber != 0 ? $"[{LineNumber}]" : string.Empty)} {Severity.ToString().ToLowerInvariant()}: {Message}";
 
         public int StartOffset { get; set; }
 

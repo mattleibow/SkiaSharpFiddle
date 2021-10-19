@@ -1,4 +1,5 @@
-﻿using AppKit;
+﻿using System;
+using AppKit;
 using Foundation;
 using SkiaSharpFiddle.XF;
 using Xamarin.Forms;
@@ -11,13 +12,18 @@ namespace SkiaSharpFiddleMac
     {
         NSWindow window;
 
+        public override bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender) => true;
+
         public AppDelegate()
         {
             var style = NSWindowStyle.Closable | NSWindowStyle.Resizable | NSWindowStyle.Titled;
-
             var rect = new CoreGraphics.CGRect(200, 1000, 1024, 768);
             window = new NSWindow(rect, style, NSBackingStore.Buffered, false);
-            window.TitleVisibility = NSWindowTitleVisibility.Hidden;
+            window.TitleVisibility = NSWindowTitleVisibility.Visible;
+            window.Title = "SkiaSharpFiddle";
+            
+            NSMenu menubar = new NSMenu();
+            NSApplication.SharedApplication.MainMenu = menubar;
         }
 
         public override NSWindow MainWindow

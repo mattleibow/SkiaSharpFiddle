@@ -29,7 +29,7 @@ namespace SkiaSharpFiddle
         {
             var color = SKImageInfo.PlatformColorType;
             var colorString = color == SKColorType.Bgra8888 ? "BGRA" : "RGBA";
-            ColorCombinations = new ColorCombination[]
+            ColorCombinations = new[]
             {
                 new ColorCombination(colorString, color, null),
                 new ColorCombination($"{colorString} (sRGB)", color, SKColorSpace.CreateSrgb()),

@@ -99,6 +99,9 @@
           <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard2.0\System.Memory.dll</HintPath>
           <Private>True</Private>
         </Reference>
+        <Reference Include="System.Reactive, Version=4.3.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+          <HintPath>..\..\..\.nuget\packages\system.reactive\4.3.2\lib\netstandard2.0\System.Reactive.dll</HintPath>
+        </Reference>
         <Reference Include="System.Reflection.Metadata, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\packages\System.Reflection.Metadata.5.0.0\lib\netstandard2.0\System.Reflection.Metadata.dll</HintPath>
           <Private>True</Private>
