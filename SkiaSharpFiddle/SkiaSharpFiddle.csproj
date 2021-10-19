@@ -1,29 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <ApplicationIcon>output.ico</ApplicationIcon>
+    <LangVersion>latestmajor</LangVersion>
+    <Nullable>enable</Nullable>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Resources\InitialSource.cs" />
-    <EmbeddedResource Include="Resources\InitialSource.cs" />
+    <EmbeddedResource Include="Resources\InitialSource.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Compile Remove="CompilationResultsTransformer.cs" />
+    <Compile Remove="Properties\Settings.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
+    <PackageReference Include="MVVMHelpers" Version="2012.4.20.3" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.4.1-beta" />
     <PackageReference Include="SkiaSharp" Version="1.68.1.1" />
     <PackageReference Include="SkiaSharp.Extended" Version="1.60.0" />
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.1.1" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="1.68.1.1" NoWarn="NU1701" />
+    <PackageReference Include="System.Collections" Version="4.0.10" />
     <PackageReference Include="System.Reactive" Version="4.3.2" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Xamarin.Forms.5.0.0.2196\lib\Xamarin.Mac\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\Settings.settings" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SkiaSharp.Extended" Version="1.60.0" />
+        <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
+        <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.1.1" />
+        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ApplicationDefinition Include="App.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+      </ApplicationDefinition>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="App.xaml.cs">
+        <DependentUpon>App.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="MainWindow.xaml.cs">
+        <DependentUpon>MainWindow.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Include="MainWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SkiaSharpFiddle\SkiaSharpFiddle.csproj" />
+    </ItemGroup>
+</Project>

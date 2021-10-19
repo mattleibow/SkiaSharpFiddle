@@ -5,15 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using Xamarin.Forms;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.XF
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : ContentPage
     {
         private static readonly SKColor PaneColor = 0xFFF5F5F5;
         private static readonly SKColor AlternatePaneColor = 0xFFF0F0F0;
@@ -26,48 +25,48 @@ namespace SkiaSharpFiddle
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
             ViewModel.CompilationMessages.CollectionChanged += OnCompilationMessagesChanged;
 
-            Observable.FromEventPattern(editor, nameof(editor.TextChanged))
-                .Select(evt => (evt.Sender as TextEditor)?.Text)
-                .Where(text => !string.IsNullOrWhiteSpace(text))
-                .Throttle(TimeSpan.FromMilliseconds(250))
-                .DistinctUntilChanged()
-                .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
+            // Observable.FromEventPattern(editor, nameof(editor.TextChanged))
+            //     .Select(evt => (evt.Sender as TextEditor)?.Text)
+            //     .Where(text => !string.IsNullOrWhiteSpace(text))
+            //     .Throttle(TimeSpan.FromMilliseconds(250))
+            //     .DistinctUntilChanged()
+            //     .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
             _ = LoadInitialSourceAsync();
 
-            editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
-
-            editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
-            editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
-
-            VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
-            VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+            // editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
+            //
+            // editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Color.Transparent);
+            // editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
+            //
+            // VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
+            // VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
         }
 
-        public MainViewModel ViewModel => DataContext as MainViewModel;
+        public MainViewModel ViewModel => BindingContext as MainViewModel;
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            base.OnStateChanged(e);
-            VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
-        }
+        // protected override void OnStateChanged(EventArgs e)
+        // {
+        //     base.OnStateChanged(e);
+        //     VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+        // }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MainViewModel.RasterDrawing) ||
                 e.PropertyName == nameof(MainViewModel.GpuDrawing))
             {
-                preview.InvalidateVisual();
+                // preview.InvalidateVisual();
             }
             else if (e.PropertyName == nameof(MainViewModel.Mode))
             {
-                VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
+                // VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
             }
         }
 
         private void OnCompilationMessagesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            editor.TextArea.TextView.Redraw();
+            // editor.TextArea.TextView.Redraw();
         }
 
         private async Task LoadInitialSourceAsync()
@@ -80,13 +79,14 @@ namespace SkiaSharpFiddle
             using (var stream = assembly.GetManifestResourceStream(resource))
             using (var reader = new StreamReader(stream))
             {
-                editor.Text = await reader.ReadToEndAsync();
+                // editor.Text = await reader.ReadToEndAsync();
             }
         }
 
-        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        private void OnPaintSurface(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
         {
-            var scale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            // var scale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            var scale = 1.0f;
             var width = e.Info.Width;
             var height = e.Info.Height;
 

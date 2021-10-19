@@ -1,0 +1,63 @@
+﻿<Application x:Class="SkiaSharpFiddle.XF.App"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.Core"
+             xmlns:skiaSharpFiddle="clr-namespace:SkiaSharpFiddle;assembly=SkiaSharpFiddle">
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <skiaSharpFiddle:ModeToStatusBarTextConverter x:Key="ModeToStatusBarTextConverter" />
+
+            <SolidColorBrush x:Key="BackgroundBrush">#EEEEF2</SolidColorBrush>
+            <SolidColorBrush x:Key="BorderBrush">#CCCEDB</SolidColorBrush>
+            <SolidColorBrush x:Key="PaneBrush">#F5F5F5</SolidColorBrush>
+            <SolidColorBrush x:Key="AlternatePaneBrush">#F0F0F0</SolidColorBrush>
+            <SolidColorBrush x:Key="ReadyStatusBarBackgroundBrush">#007ACC</SolidColorBrush>
+            <SolidColorBrush x:Key="WorkingStatusBarBackgroundBrush">#0E639C</SolidColorBrush>
+            <SolidColorBrush x:Key="ErrorStatusBarBackgroundBrush">#CA5100</SolidColorBrush>
+            <SolidColorBrush x:Key="StatusBarForegroundBrush">#FFFFFF</SolidColorBrush>
+            <sys:Double x:Key="SplitterSize">6</sys:Double>
+            <Thickness x:Key="WindowPadding">6</Thickness>
+            <Thickness x:Key="BorderWidth">1</Thickness>
+            <Thickness x:Key="StatusBarMaximizedPadding">3,0</Thickness>
+            <Thickness x:Key="StatusBarNormalPadding">3,0,18,0</Thickness>
+
+            <!-- <Style x:Key="BorderStyle" TargetType="Border"> -->
+            <!--     <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}" /> -->
+            <!--     <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" /> -->
+            <!--     <Setter Property="Background" Value="{StaticResource BackgroundBrush}" /> -->
+            <!-- </Style> -->
+            <!-- -->
+            <!-- <Style x:Key="SplitterStyle" TargetType="GridSplitter"> -->
+            <!--     <Setter Property="Background" Value="{StaticResource BackgroundBrush}" /> -->
+            <!-- </Style> -->
+            <!-- -->
+            <!-- <Style x:Key="ToolbarStyle" TargetType="ToolBarTray"> -->
+            <!--     <Style.Resources> -->
+            <!--         <ResourceDictionary> -->
+            <!--             <Style TargetType="ToolBar"> -->
+            <!--                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}" /> -->
+            <!--             </Style> -->
+            <!--         </ResourceDictionary> -->
+            <!--     </Style.Resources> -->
+            <!--     <Setter Property="Background" Value="{StaticResource BackgroundBrush}" /> -->
+            <!-- </Style> -->
+            <!-- -->
+            <!-- <Style x:Key="StatusBarStyle" TargetType="StatusBar"> -->
+            <!--     <Style.Resources> -->
+            <!--         <ResourceDictionary> -->
+            <!--             <Style TargetType="StatusBarItem"> -->
+            <!--                 <Setter Property="HorizontalAlignment" Value="Right" /> -->
+            <!--                 <Setter Property="Foreground" Value="{StaticResource StatusBarForegroundBrush}" /> -->
+            <!--                 <Setter Property="Padding" Value="0" /> -->
+            <!--                 <Setter Property="Margin" Value="3" /> -->
+            <!--             </Style> -->
+            <!--         </ResourceDictionary> -->
+            <!--     </Style.Resources> -->
+            <!--     <Setter Property="Background" Value="{StaticResource BackgroundBrush}" /> -->
+            <!--     <Setter Property="Height" Value="26" /> -->
+            <!-- </Style> -->
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

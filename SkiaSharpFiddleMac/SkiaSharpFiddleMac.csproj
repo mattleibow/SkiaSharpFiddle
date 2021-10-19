@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" />
+    <Import Project="..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+        <ProjectGuid>{3B832806-4B12-4EC2-96C3-4824418E2BEF}</ProjectGuid>
+        <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SkiaSharpFiddleMac</RootNamespace>
+        <AssemblyName>SkiaSharpFiddleMac</AssemblyName>
+        <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+        <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
+        <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug</OutputPath>
+        <DefineConstants>DEBUG;</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <EnableCodeSigning>false</EnableCodeSigning>
+        <CodeSigningKey>Mac Developer</CodeSigningKey>
+        <CreatePackage>false</CreatePackage>
+        <EnablePackageSigning>false</EnablePackageSigning>
+        <IncludeMonoRuntime>false</IncludeMonoRuntime>
+        <UseSGen>true</UseSGen>
+        <UseRefCounting>true</UseRefCounting>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <DebugType>none</DebugType>
+      <Optimize>false</Optimize>
+      <ErrorReport>prompt</ErrorReport>
+      <WarningLevel>4</WarningLevel>
+      <EnableCodeSigning>false</EnableCodeSigning>
+      <CreatePackage>true</CreatePackage>
+      <EnablePackageSigning>false</EnablePackageSigning>
+      <IncludeMonoRuntime>true</IncludeMonoRuntime>
+      <UseSGen>true</UseSGen>
+      <UseRefCounting>true</UseRefCounting>
+      <LinkMode>None</LinkMode>
+      <MtouchLink>Full</MtouchLink>
+      <OutputPath>bin\Release\</OutputPath>
+      <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Microsoft.CodeAnalysis, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+          <HintPath>..\..\..\.nuget\packages\microsoft.codeanalysis.common\3.5.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+          <HintPath>..\..\..\.nuget\packages\microsoft.codeanalysis.csharp\3.5.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="MvvmHelpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\.nuget\packages\refractored.mvvmhelpers\1.4.1-beta\lib\netstandard2.0\MvvmHelpers.dll</HintPath>
+        </Reference>
+        <Reference Include="SkiaSharp, Version=1.68.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+          <HintPath>..\packages\SkiaSharp.1.68.1.1\lib\Xamarin.Mac20\SkiaSharp.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="SkiaSharp.Extended, Version=1.60.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+          <HintPath>..\packages\SkiaSharp.Extended.1.60.0\lib\netstandard2.0\SkiaSharp.Extended.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="SkiaSharp.Extended.Svg, Version=1.60.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+          <HintPath>..\packages\SkiaSharp.Svg.1.60.0\lib\netstandard2.0\SkiaSharp.Extended.Svg.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="SkiaSharp.Views.Desktop.Common, Version=1.68.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+          <HintPath>..\..\..\.nuget\packages\skiasharp.views.desktop.common\1.68.1.1\lib\netstandard2.0\SkiaSharp.Views.Desktop.Common.dll</HintPath>
+        </Reference>
+        <Reference Include="SkiaSharp.Views.Forms, Version=1.68.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\SkiaSharp.Views.Forms.1.68.1.1\lib\Xamarin.Mac20\SkiaSharp.Views.Forms.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="SkiaSharp.Views.Mac, Version=1.68.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+          <HintPath>..\packages\SkiaSharp.Views.1.68.1.1\lib\Xamarin.Mac20\SkiaSharp.Views.Mac.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+          <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard2.0\System.Buffers.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Collections, Version=4.0.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>bin\Debug\SkiaSharpFiddleMac.app\Contents\MonoBundle\System.Collections.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>..\packages\System.Collections.Immutable.5.0.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Core" />
+        <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+          <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard2.0\System.Memory.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Reflection.Metadata, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>..\packages\System.Reflection.Metadata.5.0.0\lib\netstandard2.0\System.Reflection.Metadata.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+          <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Xamarin.Forms.5.0.0.2196\lib\Xamarin.Mac\Xamarin.Forms.Core.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="Xamarin.Forms.Platform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Xamarin.Forms.5.0.0.2196\lib\Xamarin.Mac\Xamarin.Forms.Platform.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="Xamarin.Forms.Platform.macOS, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Xamarin.Forms.5.0.0.2196\lib\Xamarin.Mac\Xamarin.Forms.Platform.macOS.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Xamarin.Forms.5.0.0.2196\lib\Xamarin.Mac\Xamarin.Forms.Xaml.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="Xamarin.Mac" />
+    </ItemGroup>
+    <ItemGroup>
+        <ImageAsset Include="Assets.xcassets\Contents.json" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16@2x.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32@2x.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128@2x.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256@2x.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512@2x.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="Info.plist" />
+        <None Include="Entitlements.plist" />
+        <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Main.cs" />
+        <Compile Include="AppDelegate.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\SkiaSharpFiddle.XF\SkiaSharpFiddle.XF.csproj">
+        <Project>{a4ec3b3a-a542-49c7-85cd-8077adb827cb}</Project>
+        <Name>SkiaSharpFiddle.XF</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\SkiaSharpFiddle\SkiaSharpFiddle.csproj">
+        <Project>{357cb700-2ae2-4703-9d10-5ee5a225987a}</Project>
+        <Name>SkiaSharpFiddle</Name>
+      </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+      <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    </ItemGroup>
+    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
+    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+      <PropertyGroup>
+        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+      </PropertyGroup>
+      <Error Condition="!Exists('..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.props'))" />
+      <Error Condition="!Exists('..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.targets'))" />
+      <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
+      <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
+    </Target>
+    <Import Project="..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.5.0.0.2196\build\Xamarin.Forms.targets')" />
+    <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
+</Project>

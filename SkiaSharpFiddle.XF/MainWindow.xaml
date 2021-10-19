@@ -1,0 +1,174 @@
+﻿<ContentPage x:Class="SkiaSharpFiddle.XF.MainWindow"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:skiaSharpFiddle="clr-namespace:SkiaSharpFiddle;assembly=SkiaSharpFiddle"
+             xmlns:xf="clr-namespace:SkiaSharpFiddle.XF;assembly=SkiaSharpFiddle.XF"
+             xmlns:forms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             mc:Ignorable="d"
+             Title="{Binding SkiaSharpVersion, StringFormat='SkiaSharp Fiddle - {0}', FallbackValue='SkiaSharp Fiddle'}"
+             Background="{StaticResource BackgroundBrush}">
+    
+    <ContentPage.BindingContext>
+        <skiaSharpFiddle:MainViewModel />
+    </ContentPage.BindingContext>
+    
+    <!-- <VisualStateManager.VisualStateGroups> -->
+    <!--     <VisualStateGroup x:Name="Modes"> -->
+    <!--         <VisualState x:Name="Ready"> -->
+    <!--             <Storyboard> -->
+    <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" -->
+    <!--                                                Storyboard.TargetProperty="Background"> -->
+    <!--                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ReadyStatusBarBackgroundBrush}" /> -->
+    <!--                 </ObjectAnimationUsingKeyFrames> -->
+    <!--             </Storyboard> -->
+    <!--         </VisualState> -->
+    <!--         <VisualState x:Name="Working"> -->
+    <!--             <Storyboard> -->
+    <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" -->
+    <!--                                                Storyboard.TargetProperty="Background"> -->
+    <!--                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource WorkingStatusBarBackgroundBrush}" /> -->
+    <!--                 </ObjectAnimationUsingKeyFrames> -->
+    <!--             </Storyboard> -->
+    <!--         </VisualState> -->
+    <!--         <VisualState x:Name="Error"> -->
+    <!--             <Storyboard> -->
+    <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" -->
+    <!--                                                Storyboard.TargetProperty="Background"> -->
+    <!--                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ErrorStatusBarBackgroundBrush}" /> -->
+    <!--                 </ObjectAnimationUsingKeyFrames> -->
+    <!--             </Storyboard> -->
+    <!--         </VisualState> -->
+    <!--     </VisualStateGroup> -->
+    <!--     <VisualStateGroup x:Name="WindowStates"> -->
+    <!--         <VisualState x:Name="Normal"> -->
+    <!--             <Storyboard> -->
+    <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" -->
+    <!--                                                Storyboard.TargetProperty="Padding"> -->
+    <!--                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource StatusBarNormalPadding}" /> -->
+    <!--                 </ObjectAnimationUsingKeyFrames> -->
+    <!--             </Storyboard> -->
+    <!--         </VisualState> -->
+    <!--         <VisualState x:Name="Minimized"> -->
+    <!--         </VisualState> -->
+    <!--         <VisualState x:Name="Maximized"> -->
+    <!--             <Storyboard> -->
+    <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="statusbar" -->
+    <!--                                                Storyboard.TargetProperty="Padding"> -->
+    <!--                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource StatusBarMaximizedPadding}" /> -->
+    <!--                 </ObjectAnimationUsingKeyFrames> -->
+    <!--             </Storyboard> -->
+    <!--         </VisualState> -->
+    <!--     </VisualStateGroup> -->
+    <!-- </VisualStateManager.VisualStateGroups> -->
+
+    <!-- <DockPanel> -->
+    <!-- -->
+    <!--     <Menu DockndingContextPanel.Dock="Top"> -->
+    <!--         <MenuItem Header="_File"> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--         </MenuItem> -->
+    <!--         <MenuItem Header="_File"> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--             <MenuItem Header="_Save" /> -->
+    <!--         </MenuItem> -->
+    <!--     </Menu>-->
+    <!-- -->
+    <!--     <ToolBarTray DockPanel.Dock="Top" Style="{StaticResource ToolbarStyle}"> -->
+    <!--         <ToolBar> -->
+    <!--             <Label Content="Color: " /> -->
+    <!--             <ComboBox Width="100" -->
+    <!--                       SelectedItem="{Binding ColorCombination, Mode=TwoWay}" -->
+    <!--                       ItemsSource="{Binding ColorCombinations}" DisplayMemberPath="Name" /> -->
+    <!--             <Separator /> -->
+    <!--             <Label Content="Width: " /> -->
+    <!--             <TextBox Text="{Binding DrawingWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" /> -->
+    <!--             <Label Content="Height: " /> -->
+    <!--             <TextBox Text="{Binding DrawingHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" /> -->
+    <!--         </ToolBar> -->
+    <!--     </ToolBarTray> -->
+    <!-- -->
+    <!--     <StatusBar x:Name="statusbar" DockPanel.Dock="Bottom" Style="{StaticResource StatusBarStyle}"> -->
+    <!-- -->
+    <!--         <StatusBarItem HorizontalAlignment="Stretch"> -->
+    <!--             <TextBlock Text="{Binding Mode, Converter={StaticResource ModeToStatusBarTextConverter}}" /> -->
+    <!--         </StatusBarItem> -->
+    <!-- -->
+    <!--     </StatusBar> -->
+    <!-- -->
+        <Grid Margin="{StaticResource WindowPadding}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+    
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+    
+    <!--             <Border Grid.Column="0" Style="{StaticResource BorderStyle}"> -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+    
+                        <Label Text="Code" />
+                        <!-- <avalonEdit:TextEditor x:Name="editor" Grid.Row="1" -->
+                        <!--                        ShowLineNumbers="True" -->
+                        <!--                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" -->
+                        <!--                        FontFamily="Consolas" SyntaxHighlighting="C#" FontSize="10pt"> -->
+                        <!--     <avalonEdit:TextEditor.Options> -->
+                        <!--         <avalonEdit:TextEditorOptions HighlightCurrentLine="True" /> -->
+                        <!--     </avalonEdit:TextEditor.Options> -->
+                        <!-- </avalonEdit:TextEditor> -->
+                    </Grid>
+    <!--             </Border> -->
+    
+    <!--             <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" -->
+    <!--                           Width="{StaticResource SplitterSize}" Style="{StaticResource SplitterStyle}" /> -->
+    
+    <!--             <Border Grid.Column="2" Style="{StaticResource BorderStyle}"> -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+        
+            <Label Text="Output" />
+            <forms:SKCanvasView x:Name="preview" PaintSurface="OnPaintSurface" Grid.Row="1" />
+        </Grid>
+    <!--             </Border> -->
+    </Grid>
+    
+    <!--         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" -->
+    <!--                       Height="{StaticResource SplitterSize}" Style="{StaticResource SplitterStyle}" /> -->
+    
+    <!--         <Border Grid.Row="2" Style="{StaticResource BorderStyle}"> -->
+    <Grid Grid.Row="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+    
+        <Label Text="Messages" />
+        <ListView ItemsSource="{Binding CompilationMessages}" Background="{StaticResource PaneBrush}" Grid.Row="1" />
+    </Grid>
+    <!--         </Border> -->
+    
+    </Grid>
+    
+    <!-- </DockPanel> -->
+
+</ContentPage>

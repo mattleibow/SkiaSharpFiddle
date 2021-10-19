@@ -15,6 +15,7 @@ namespace SkiaSharpFiddle
             "System.Core",
             "System.Private.CoreLib",
             "System.Runtime",
+            "System.Runtime.CompilerServices",
             "SkiaSharp",
             "SkiaSharp.Extended",
             "SkiaSharp.Extended.Svg",
