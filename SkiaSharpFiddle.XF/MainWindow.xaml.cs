@@ -14,6 +14,8 @@ namespace SkiaSharpFiddle.XF
         private static readonly SKColor AlternatePaneColor = 0xFFF0F0F0;
         private const int BaseBlockSize = 8;
 
+        public Editor Editor;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -21,6 +23,8 @@ namespace SkiaSharpFiddle.XF
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
             _ = LoadInitialSourceAsync();
+
+            this.Editor = editor;
             
             VisualStateManager.GoToState(this, ViewModel.Mode.ToString());
         }

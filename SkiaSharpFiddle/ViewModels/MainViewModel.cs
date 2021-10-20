@@ -13,6 +13,7 @@ namespace SkiaSharpFiddle.ViewModels
         private readonly Compiler.Compiler compiler = new Compiler.Compiler();
 
         private string sourceCode;
+        private string openFilePath;
 
         private int drawingWidth = 256;
         private int drawingHeight = 256;
@@ -64,6 +65,12 @@ namespace SkiaSharpFiddle.ViewModels
         {
             get => sourceCode;
             set => SetProperty(ref sourceCode, value, onChanged: OnSourceCodeChanged);
+        }
+        
+        public string OpenFilePath
+        {
+            get => openFilePath;
+            set => SetProperty(ref openFilePath, value);
         }
 
         public int DrawingWidth
