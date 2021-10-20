@@ -19,6 +19,7 @@ namespace SkiaSharpFiddle
             "SkiaSharp",
             "SkiaSharp.Extended",
             "SkiaSharp.Extended.Svg",
+            "System.Xml",
             "System.Xml.ReaderWriter",
             "System.Private.Xml",
         };
