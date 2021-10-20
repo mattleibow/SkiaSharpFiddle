@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using SkiaSharpFiddle.ViewModels;
 using Xamarin.Forms;
 
 namespace SkiaSharpFiddle

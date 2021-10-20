@@ -4,12 +4,13 @@ using System.Reflection;
 using System.Threading;
 using MvvmHelpers;
 using SkiaSharp;
+using SkiaSharpFiddle.Compiler;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly Compiler compiler = new Compiler();
+        private readonly Compiler.Compiler compiler = new Compiler.Compiler();
 
         private string sourceCode;
 

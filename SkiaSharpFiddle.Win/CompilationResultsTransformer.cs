@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
+using SkiaSharpFiddle.ViewModels;
 using Xamarin.Forms;
 
 namespace SkiaSharpFiddle.Win

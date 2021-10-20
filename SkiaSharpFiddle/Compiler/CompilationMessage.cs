@@ -1,4 +1,4 @@
-﻿namespace SkiaSharpFiddle
+﻿namespace SkiaSharpFiddle.Compiler
 {
     public class CompilationMessage
     {

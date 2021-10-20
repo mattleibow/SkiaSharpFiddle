@@ -10,6 +10,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using SkiaSharpFiddle.ViewModels;
 
 namespace SkiaSharpFiddle.Win
 {
@@ -72,10 +73,8 @@ namespace SkiaSharpFiddle.Win
 
         private async Task LoadInitialSourceAsync()
         {
-            var type = typeof(MainWindow);
-            var assembly = type.Assembly;
-
-            var resource = $"{type.Namespace}.Resources.InitialSource.cs";
+            var assembly = typeof(MainViewModel).Assembly;
+            var resource = $"{typeof(MainViewModel).Namespace.Split(".")[0]}.Resources.InitialSource.cs";
 
             using (var stream = assembly.GetManifestResourceStream(resource))
             using (var reader = new StreamReader(stream))

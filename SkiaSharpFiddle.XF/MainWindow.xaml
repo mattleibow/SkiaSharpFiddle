@@ -1,13 +1,13 @@
 ﻿<ContentPage x:Class="SkiaSharpFiddle.XF.MainWindow"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:skiaSharpFiddle="clr-namespace:SkiaSharpFiddle;assembly=SkiaSharpFiddle"
              xmlns:forms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:viewModels="clr-namespace:SkiaSharpFiddle.ViewModels;assembly=SkiaSharpFiddle"
              Title="{Binding SkiaSharpVersion, StringFormat='SkiaSharp Fiddle - {0}', FallbackValue='SkiaSharp Fiddle'}"
              Background="{StaticResource BackgroundBrush}">
     
     <ContentPage.BindingContext>
-        <skiaSharpFiddle:MainViewModel />
+        <viewModels:MainViewModel />
     </ContentPage.BindingContext>
     
     <VisualStateManager.VisualStateGroups>

@@ -11,9 +11,7 @@
 
   <ItemGroup>
     <Compile Remove="Resources\InitialSource.cs" />
-    <EmbeddedResource Include="Resources\InitialSource.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\InitialSource.cs" />
     <Compile Remove="CompilationResultsTransformer.cs" />
     <Compile Remove="Properties\Settings.Designer.cs" />
   </ItemGroup>

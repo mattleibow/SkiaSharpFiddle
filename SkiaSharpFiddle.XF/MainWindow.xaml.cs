@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
+using SkiaSharpFiddle.ViewModels;
 using Xamarin.Forms;
 
 namespace SkiaSharpFiddle.XF

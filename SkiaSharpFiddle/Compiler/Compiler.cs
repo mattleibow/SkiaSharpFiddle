@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using SkiaSharp;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Compiler
 {
     internal class Compiler
     {
