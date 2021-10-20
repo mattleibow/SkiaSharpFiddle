@@ -21,9 +21,6 @@ namespace SkiaSharpFiddleMac
             window = new NSWindow(rect, style, NSBackingStore.Buffered, false);
             window.TitleVisibility = NSWindowTitleVisibility.Visible;
             window.Title = "SkiaSharpFiddle";
-            
-            NSMenu menubar = new NSMenu();
-            NSApplication.SharedApplication.MainMenu = menubar;
         }
 
         public override NSWindow MainWindow

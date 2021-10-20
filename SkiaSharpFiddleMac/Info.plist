@@ -25,6 +25,8 @@
     <string>NSApplication</string>
     <key>XSAppIconAssets</key>
     <string>Assets.xcassets/AppIcon.appiconset</string>
+    <key>NSMainStoryboardFile</key>
+    <string>Main</string>
   </dict>
 </plist>
 
