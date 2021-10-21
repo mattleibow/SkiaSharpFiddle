@@ -20,7 +20,7 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Luka Rivic</string>
+    <string>Matthew Leibowitz, macOS Port Luka Rivic</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>XSAppIconAssets</key>
