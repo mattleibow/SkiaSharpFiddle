@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.ViewModels
 {
     public class ColorCombination
     {

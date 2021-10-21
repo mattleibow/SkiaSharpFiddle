@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Win
 {
     public partial class App : Application
     {

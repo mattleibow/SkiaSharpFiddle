@@ -1,4 +1,4 @@
-﻿namespace SkiaSharpFiddle
+﻿namespace SkiaSharpFiddle.ViewModels
 {
     public enum Mode
     {

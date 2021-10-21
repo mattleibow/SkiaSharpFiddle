@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Compiler
 {
     public static class CompilationExtensions
     {

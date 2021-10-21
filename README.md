@@ -9,4 +9,6 @@ This little app is made using some really awesome open source libraries:
  - [Roslyn .NET Compiler](https://github.com/dotnet/roslyn) as the code compiler
  - [Windows Presentation Foundation (WPF)](https://github.com/dotnet/wpf) as the UI framework
 
+For macOS, there is a port to Xamarin.Forms available.
+
 ![Screenshot](screenshot.png)

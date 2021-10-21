@@ -1,0 +1,106 @@
+﻿<ContentPage x:Class="SkiaSharpFiddle.XF.MainWindow"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:forms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:viewModels="clr-namespace:SkiaSharpFiddle.ViewModels;assembly=SkiaSharpFiddle"
+             Title="{Binding SkiaSharpVersion, StringFormat='SkiaSharp Fiddle - {0}', FallbackValue='SkiaSharp Fiddle'}"
+             Background="{StaticResource BackgroundBrush}">
+    
+    <ContentPage.BindingContext>
+        <viewModels:MainViewModel />
+    </ContentPage.BindingContext>
+    
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="Modes">
+            <VisualState x:Name="Ready">
+                <VisualState.Setters>
+                    <Setter TargetName="statusbar" Property="ContentView.BackgroundColor" Value="{StaticResource ReadyStatusBarBackground}"/>
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Working">
+                <VisualState.Setters>
+                    <Setter TargetName="statusbar" Property="ContentView.BackgroundColor" Value="{StaticResource WorkingStatusBarBackground}"/>
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Error">
+                <VisualState.Setters>
+                    <Setter TargetName="statusbar" Property="ContentView.BackgroundColor" Value="{StaticResource ErrorStatusBarBackground}"/>
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+    
+    <Grid Margin="{StaticResource WindowPadding}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+    
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" Grid.Row="0" Grid.ColumnSpan="3">
+                <Label Text="Color: " VerticalTextAlignment="Center" />
+                <Picker WidthRequest="100" 
+                        SelectedItem="{Binding ColorCombination, Mode=TwoWay}"
+                        ItemsSource="{Binding ColorCombinations}" ItemDisplayBinding="{Binding Name}" />
+                <Label Text="Width: " VerticalTextAlignment="Center" />
+                <Entry Text="{Binding DrawingWidth, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}" WidthRequest="100" FontSize="12" VerticalTextAlignment="Center" />
+                <Label Text="Height: " VerticalTextAlignment="Center" />
+                <Entry Text="{Binding DrawingHeight, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}" WidthRequest="100" FontSize="12" VerticalTextAlignment="Center" />
+            </StackLayout>
+            
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Label Text="Code" />
+                <Editor Grid.Row="1" x:Name="editor" TextChanged="Editor_OnTextChanged" FontFamily="Consolas" />
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Label Text="Output" />
+                <forms:SKCanvasView x:Name="preview" PaintSurface="Canvas_OnPaintSurface" Grid.Row="1" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Text="Messages" />
+            <ListView Grid.Row="1" SelectionMode="None" ItemsSource="{Binding CompilationMessages}" Background="{StaticResource PaneBrush}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding DisplayMessage}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <ContentView Grid.Row="3" x:Name="statusbar" Style="{StaticResource StatusBarStyle}">
+            <Label Text="{Binding Mode, Converter={StaticResource ModeToStatusBarTextConverter}}"
+                   Style="{StaticResource StatusBarText}" />
+        </ContentView>
+    </Grid>
+
+</ContentPage>

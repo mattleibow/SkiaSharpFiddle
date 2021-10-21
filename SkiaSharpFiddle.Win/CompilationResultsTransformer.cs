@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
+using SkiaSharpFiddle.ViewModels;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Win
 {
     public class CompilationResultsTransformer : ColorizingTransformer
     {

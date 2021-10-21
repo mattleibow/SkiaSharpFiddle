@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using SkiaSharpFiddle.ViewModels;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Win
 {
     public class ModeToStatusBarTextConverter : IValueConverter
     {

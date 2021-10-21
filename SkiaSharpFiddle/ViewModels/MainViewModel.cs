@@ -4,14 +4,16 @@ using System.Reflection;
 using System.Threading;
 using MvvmHelpers;
 using SkiaSharp;
+using SkiaSharpFiddle.Compiler;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly Compiler compiler = new Compiler();
+        private readonly Compiler.Compiler compiler = new Compiler.Compiler();
 
         private string sourceCode;
+        private string openFilePath;
 
         private int drawingWidth = 256;
         private int drawingHeight = 256;
@@ -29,7 +31,7 @@ namespace SkiaSharpFiddle
         {
             var color = SKImageInfo.PlatformColorType;
             var colorString = color == SKColorType.Bgra8888 ? "BGRA" : "RGBA";
-            ColorCombinations = new ColorCombination[]
+            ColorCombinations = new[]
             {
                 new ColorCombination(colorString, color, null),
                 new ColorCombination($"{colorString} (sRGB)", color, SKColorSpace.CreateSrgb()),
@@ -63,6 +65,12 @@ namespace SkiaSharpFiddle
         {
             get => sourceCode;
             set => SetProperty(ref sourceCode, value, onChanged: OnSourceCodeChanged);
+        }
+        
+        public string OpenFilePath
+        {
+            get => openFilePath;
+            set => SetProperty(ref openFilePath, value);
         }
 
         public int DrawingWidth

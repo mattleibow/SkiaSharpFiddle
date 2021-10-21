@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using SkiaSharp;
 
-namespace SkiaSharpFiddle
+namespace SkiaSharpFiddle.Compiler
 {
     public class CompilationResult
     {

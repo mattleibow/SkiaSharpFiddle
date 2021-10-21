@@ -1,4 +1,4 @@
-﻿namespace SkiaSharpFiddle
+﻿namespace SkiaSharpFiddle.Compiler
 {
     public enum CompilationMessageSeverity
     {

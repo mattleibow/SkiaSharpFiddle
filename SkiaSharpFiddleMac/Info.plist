@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+  <dict>
+    <key>CFBundleName</key>
+    <string>SkiaSharpFiddleMac</string>
+    <key>CFBundleIdentifier</key>
+    <string>at.rivic.SkiaSharpFiddleMac</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.10</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Matthew Leibowitz, macOS Port Luka Rivic</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>XSAppIconAssets</key>
+    <string>Assets.xcassets/AppIcon.appiconset</string>
+    <key>NSMainStoryboardFile</key>
+    <string>Main</string>
+  </dict>
+</plist>
+
