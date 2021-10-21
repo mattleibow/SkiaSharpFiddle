@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.Core"
-             xmlns:skiaSharpFiddle="clr-namespace:SkiaSharpFiddle;assembly=SkiaSharpFiddle">
+             xmlns:xf="clr-namespace:SkiaSharpFiddle.XF;assembly=SkiaSharpFiddle.XF">
     <Application.Resources>
         <ResourceDictionary>
 
-            <skiaSharpFiddle:ModeToStatusBarTextConverter x:Key="ModeToStatusBarTextConverter" />
+            <xf:ModeToStatusBarTextConverter x:Key="ModeToStatusBarTextConverter" />
 
             <SolidColorBrush x:Key="BackgroundBrush">#EEEEF2</SolidColorBrush>
             <SolidColorBrush x:Key="BorderBrush">#CCCEDB</SolidColorBrush>

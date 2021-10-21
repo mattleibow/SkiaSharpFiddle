@@ -2,12 +2,16 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>netcoreapp3.1;netstandard2.1</TargetFrameworks>
         <UseWPF>true</UseWPF>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SkiaSharpFiddle\SkiaSharpFiddle.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SkiaSharp.Views.WPF" Version="1.68.1.1" />
     </ItemGroup>
 
     <PropertyGroup>
