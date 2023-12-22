@@ -10,6 +10,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using SkiaSharpFiddle.GlContexts;
 
 namespace SkiaSharpFiddle
 {
@@ -58,6 +59,7 @@ namespace SkiaSharpFiddle
                 e.PropertyName == nameof(MainViewModel.GpuDrawing))
             {
                 preview.InvalidateVisual();
+                previewGpu.InvalidateVisual();
             }
             else if (e.PropertyName == nameof(MainViewModel.Mode))
             {
@@ -100,6 +102,24 @@ namespace SkiaSharpFiddle
 
             if (ViewModel.RasterDrawing != null)
                 canvas.DrawImage(ViewModel.RasterDrawing, 0, 0);
+        }
+
+        private void OnPaintSurfaceGpu(object sender, SKPaintSurfaceEventArgs e)
+        {
+            var scale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            var width = e.Info.Width;
+            var height = e.Info.Height;
+
+            var canvas = e.Surface.Canvas;
+
+            canvas.DrawText(@"GPU", 0, 0, new SKPaint());
+
+            canvas.ClipRect(SKRect.Create(ViewModel.DrawingSize));
+
+            DrawTransparencyBackground(canvas, width, height, (float)scale);
+
+            if (ViewModel.RasterDrawing != null)
+                canvas.DrawImage(ViewModel.GpuDrawing, 0, 0);
         }
 
         private void DrawTransparencyBackground(SKCanvas canvas, int width, int height, float scale)

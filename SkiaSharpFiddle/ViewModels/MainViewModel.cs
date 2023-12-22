@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading;
 using MvvmHelpers;
 using SkiaSharp;
+using SkiaSharpFiddle.GlContexts;
 
 namespace SkiaSharpFiddle
 {
@@ -157,7 +158,24 @@ namespace SkiaSharpFiddle
 
         private void GenerateGpuDrawing()
         {
-            // TODO: implement offscreen GPU drawing
+            var old = gpuDrawing;
+            var info = ImageInfo;
+
+            using (var context = new WglContext())
+            {
+                context.MakeCurrent();
+
+                using (var grContext = GRContext.CreateGl())
+                using (var surface = SKSurface.Create(grContext, true, info))
+                {
+                    var canvas = surface.Canvas;
+
+                    Draw(surface, info);
+                    gpuDrawing = surface.Snapshot();
+                }
+            }
+
+            old?.Dispose();
         }
 
         private void Draw(SKSurface surface, SKImageInfo info)
