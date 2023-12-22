@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -14,6 +15,7 @@ namespace SkiaSharpFiddle
         private readonly Compiler compiler = new Compiler();
 
         private string sourceCode;
+        private string shaderSource;
 
         private int drawingWidth = 256;
         private int drawingHeight = 256;
@@ -26,6 +28,7 @@ namespace SkiaSharpFiddle
 
         private CancellationTokenSource cancellation;
         private CompilationResult lastResult;
+        private Stopwatch m_StopWatch = Stopwatch.StartNew();
 
         public MainViewModel()
         {
@@ -65,6 +68,12 @@ namespace SkiaSharpFiddle
         {
             get => sourceCode;
             set => SetProperty(ref sourceCode, value, onChanged: OnSourceCodeChanged);
+        }
+
+        public string ShaderSource
+        {
+            get => shaderSource;
+            set => SetProperty(ref shaderSource, value);
         }
 
         public int DrawingWidth
@@ -137,7 +146,7 @@ namespace SkiaSharpFiddle
             GenerateDrawings();
         }
 
-        private void GenerateDrawings()
+        public void GenerateDrawings()
         {
             GenerateRasterDrawing();
             GenerateGpuDrawing();
@@ -152,7 +161,7 @@ namespace SkiaSharpFiddle
             {
                 Draw(surface, info);
 
-                ApplyShader(surface.Canvas);
+                //ApplyShader(surface.Canvas);
 
                 RasterDrawing = surface.Snapshot();
             }
@@ -174,9 +183,9 @@ namespace SkiaSharpFiddle
                 {
                     var canvas = surface.Canvas;
 
-                    ApplyShader(canvas);
-
                     Draw(surface, info);
+                    ApplyShader(surface);
+
                     gpuDrawing = surface.Snapshot().ToRasterImage();
                 }
             }
@@ -192,46 +201,46 @@ namespace SkiaSharpFiddle
                 CompilationMessages.ReplaceRange(messages);
         }
 
-        public void ApplyShader(SKCanvas canvas)
+        public void ApplyShader(SKSurface surface)
         {
-            float threshold = 1.05f;
-            float exponent = 1.5f;
+            var canvas = surface.Canvas;
+            string errorText = @"";
 
             // shader
-            var src = @"
-                in fragmentProcessor color_map;
+            try
+            {
+                using var effect = SKRuntimeEffect.Create(shaderSource, out errorText);
+                // input values
 
-                uniform float scale;
-                uniform half exp;
-                uniform float3 in_colors0;
+                var inputs = new SKRuntimeEffectUniforms(effect);
+                inputs["iResolution"] = new[] { DrawingWidth, drawingHeight, 400f };
+                inputs["iTime"] = m_StopWatch.ElapsedMilliseconds / 100;
 
-                half4 main(float2 p) {
-                    half4 texColor = sample(color_map, p);
-                    if (length(abs(in_colors0 - pow(texColor.rgb, half3(exp)))) < scale)
-                        discard;
-                    return texColor;
-                }";
-            using var effect = SKRuntimeEffect.Create(src, out var errorText);
+                // shader values
+                using var snapshotImage = surface.Snapshot().ToRasterImage();
+                using var textureShader = snapshotImage.ToShader();
 
-            // input values
-            var inputs = new SKRuntimeEffectUniforms(effect);
-            inputs["scale"] = threshold;
-            inputs["exp"] = exponent;
-            inputs["in_colors0"] = new[] { 1f, 1f, 1f };
+                var children = new SKRuntimeEffectChildren(effect);
+                children["color_map"] = textureShader;
 
-            // shader values
-            using var blueShirt = CreateTestBitmap();
-            using var textureShader = blueShirt.ToShader();
-            var children = new SKRuntimeEffectChildren(effect);
-            children["color_map"] = textureShader;
+                // create actual shader
+                using var shader = effect.ToShader(true, inputs, children);
 
-            // create actual shader
-            using var shader = effect.ToShader(true, inputs, children);
+                // draw as normal
+                canvas.Clear(SKColors.Black);
+                using var paint = new SKPaint { Shader = shader };
+                canvas.DrawRect(SKRect.Create(400, 400), paint);
 
-            // draw as normal
-            canvas.Clear(SKColors.Black);
-            using var paint = new SKPaint { Shader = shader };
-            canvas.DrawRect(SKRect.Create(400, 400), paint);
+                CompilationMessages.Clear();
+            }
+            catch
+            {
+                var result = new CompilationMessage() { 
+                    Message = errorText,
+                    Severity = CompilationMessageSeverity.Error};
+                CompilationMessages.Add(result);
+            }
+
         }
 
         protected static SKBitmap CreateTestBitmap(byte alpha = 255)

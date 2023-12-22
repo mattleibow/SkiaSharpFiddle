@@ -10,7 +10,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
-using SkiaSharpFiddle.GlContexts;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace SkiaSharpFiddle
 {
@@ -28,21 +28,36 @@ namespace SkiaSharpFiddle
             ViewModel.CompilationMessages.CollectionChanged += OnCompilationMessagesChanged;
 
             Observable.FromEventPattern(editor, nameof(editor.TextChanged))
+                .Merge(Observable.FromEventPattern(sksleditor, nameof(sksleditor.TextChanged)))
                 .Select(evt => (evt.Sender as TextEditor)?.Text)
                 .Where(text => !string.IsNullOrWhiteSpace(text))
                 .Throttle(TimeSpan.FromMilliseconds(250))
                 .DistinctUntilChanged()
                 .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
-            _ = LoadInitialSourceAsync();
 
-            editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
+            var ticks = Observable.Interval(TimeSpan.FromMilliseconds(100));
 
-            editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
-            editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
+            ticks.ObserveOnDispatcher()
+            .Where(_ => IsActive)
+            .Subscribe(_ =>
+            {
+                ViewModel.GenerateDrawings();
+            });
+
+            _ = LoadInitialSourceAsync(editor, @$"{typeof(MainWindow).Namespace}.Resources.InitialSource.cs");
+
+            InitializeEditor(editor);
 
             VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
             VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+        }
+
+        private void InitializeEditor(TextEditor editor)
+        {
+            editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
+            editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
+            editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
         }
 
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -72,12 +87,10 @@ namespace SkiaSharpFiddle
             editor.TextArea.TextView.Redraw();
         }
 
-        private async Task LoadInitialSourceAsync()
+        private async Task LoadInitialSourceAsync(TextEditor editor, string resource)
         {
             var type = typeof(MainWindow);
             var assembly = type.Assembly;
-
-            var resource = $"{type.Namespace}.Resources.InitialSource.cs";
 
             using (var stream = assembly.GetManifestResourceStream(resource))
             using (var reader = new StreamReader(stream))
