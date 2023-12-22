@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Windows.Controls;
 using MvvmHelpers;
 using SkiaSharp;
 using SkiaSharpFiddle.GlContexts;
@@ -150,6 +151,9 @@ namespace SkiaSharpFiddle
             using (var surface = SKSurface.Create(info))
             {
                 Draw(surface, info);
+
+                ApplyShader(surface.Canvas);
+
                 RasterDrawing = surface.Snapshot();
             }
 
@@ -170,8 +174,10 @@ namespace SkiaSharpFiddle
                 {
                     var canvas = surface.Canvas;
 
+                    ApplyShader(canvas);
+
                     Draw(surface, info);
-                    gpuDrawing = surface.Snapshot();
+                    gpuDrawing = surface.Snapshot().ToRasterImage();
                 }
             }
 
@@ -184,6 +190,83 @@ namespace SkiaSharpFiddle
 
             if (messages?.Any() == true)
                 CompilationMessages.ReplaceRange(messages);
+        }
+
+        public void ApplyShader(SKCanvas canvas)
+        {
+            float threshold = 1.05f;
+            float exponent = 1.5f;
+
+            // shader
+            var src = @"
+                in fragmentProcessor color_map;
+
+                uniform float scale;
+                uniform half exp;
+                uniform float3 in_colors0;
+
+                half4 main(float2 p) {
+                    half4 texColor = sample(color_map, p);
+                    if (length(abs(in_colors0 - pow(texColor.rgb, half3(exp)))) < scale)
+                        discard;
+                    return texColor;
+                }";
+            using var effect = SKRuntimeEffect.Create(src, out var errorText);
+
+            // input values
+            var inputs = new SKRuntimeEffectUniforms(effect);
+            inputs["scale"] = threshold;
+            inputs["exp"] = exponent;
+            inputs["in_colors0"] = new[] { 1f, 1f, 1f };
+
+            // shader values
+            using var blueShirt = CreateTestBitmap();
+            using var textureShader = blueShirt.ToShader();
+            var children = new SKRuntimeEffectChildren(effect);
+            children["color_map"] = textureShader;
+
+            // create actual shader
+            using var shader = effect.ToShader(true, inputs, children);
+
+            // draw as normal
+            canvas.Clear(SKColors.Black);
+            using var paint = new SKPaint { Shader = shader };
+            canvas.DrawRect(SKRect.Create(400, 400), paint);
+        }
+
+        protected static SKBitmap CreateTestBitmap(byte alpha = 255)
+        {
+            var bmp = new SKBitmap(40, 40);
+            bmp.Erase(SKColors.Transparent);
+
+            using (var canvas = new SKCanvas(bmp))
+            {
+                DrawTestBitmap(canvas, 40, 40, alpha);
+            }
+
+            return bmp;
+        }
+
+        private static void DrawTestBitmap(SKCanvas canvas, int width, int height, byte alpha = 255)
+        {
+            using var paint = new SKPaint();
+
+            var x = width / 2;
+            var y = height / 2;
+
+            canvas.Clear(SKColors.Transparent);
+
+            paint.Color = SKColors.Red.WithAlpha(alpha);
+            canvas.DrawRect(SKRect.Create(0, 0, x, y), paint);
+
+            paint.Color = SKColors.Green.WithAlpha(alpha);
+            canvas.DrawRect(SKRect.Create(x, 0, x, y), paint);
+
+            paint.Color = SKColors.Blue.WithAlpha(alpha);
+            canvas.DrawRect(SKRect.Create(0, y, x, y), paint);
+
+            paint.Color = SKColors.Yellow.WithAlpha(alpha);
+            canvas.DrawRect(SKRect.Create(x, y, x, y), paint);
         }
     }
 }

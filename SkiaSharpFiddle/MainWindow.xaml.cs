@@ -118,7 +118,7 @@ namespace SkiaSharpFiddle
 
             DrawTransparencyBackground(canvas, width, height, (float)scale);
 
-            if (ViewModel.RasterDrawing != null)
+            if (ViewModel.GpuDrawing != null)
                 canvas.DrawImage(ViewModel.GpuDrawing, 0, 0);
         }
 
