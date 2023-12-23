@@ -73,7 +73,7 @@ namespace SkiaSharpFiddle
         public string ShaderSource
         {
             get => shaderSource;
-            set => SetProperty(ref shaderSource, value);
+            set => SetProperty(ref shaderSource, value, onChanged: OnSourceCodeChanged);
         }
 
         public int DrawingWidth
@@ -122,6 +122,11 @@ namespace SkiaSharpFiddle
 
         private async void OnSourceCodeChanged()
         {
+            if(SourceCode == null)
+            {
+                return;
+            }
+
             cancellation?.Cancel();
             cancellation = new CancellationTokenSource();
 
@@ -176,7 +181,7 @@ namespace SkiaSharpFiddle
 
             using (var context = new WglContext())
             {
-                context.MakeCurrent();
+                context?.MakeCurrent();
 
                 using (var grContext = GRContext.CreateGl())
                 using (var surface = SKSurface.Create(grContext, true, info))
@@ -239,8 +244,12 @@ namespace SkiaSharpFiddle
                     Message = errorText,
                     Severity = CompilationMessageSeverity.Error};
                 CompilationMessages.Add(result);
+
+                Mode = Mode.Error;
+                return;
             }
 
+            Mode = Mode.Ready;
         }
 
         protected static SKBitmap CreateTestBitmap(byte alpha = 255)

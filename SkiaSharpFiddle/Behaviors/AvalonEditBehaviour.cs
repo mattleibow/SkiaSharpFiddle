@@ -14,6 +14,7 @@ uniform float3 iResolution;
 uniform float  iTime;
 
 half4 main(float2 fragCoord) {
+  fragCoord.x += sin(fragCoord.y / 3) * 4;  // Displace each row by up to 4 pixels
   float2 scale = iResolution.xy / iResolution.xy;
   half4 image = sample(color_map, fragCoord * scale).bgra;
   return image;
