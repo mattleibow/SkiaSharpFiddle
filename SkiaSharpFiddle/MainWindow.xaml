@@ -190,7 +190,7 @@
                                             PaintSurface="OnPaintSurface"
                                             Grid.Row="0" />
                             <skia:SKElement x:Name="previewGpu"
-                                            PaintSurface="OnPaintSurfaceGpu"
+                                            PaintSurface="OnPaintSurface"
                                             Grid.Row="1" />
                         </Grid>
                     </Grid>

@@ -12,8 +12,6 @@
 
   <ItemGroup>
     <Compile Remove="Resources\InitialSource.cs" />
-    <Compile Remove="Resources\RuntimeInitialSource.cs" />
-    <EmbeddedResource Include="Resources\RuntimeInitialSource.cs" />
     <EmbeddedResource Include="Resources\InitialSource.cs" />
   </ItemGroup>
 

@@ -73,7 +73,7 @@ namespace SkiaSharpFiddle
         public string ShaderSource
         {
             get => shaderSource;
-            set => SetProperty(ref shaderSource, value, onChanged: OnSourceCodeChanged);
+            set => SetProperty(ref shaderSource, value, onChanged: OnShaderChanged);
         }
 
         public int DrawingWidth
@@ -117,12 +117,13 @@ namespace SkiaSharpFiddle
             OnPropertyChanged(nameof(DrawingSize));
             OnPropertyChanged(nameof(ImageInfo));
 
-            GenerateDrawings();
+            GenerateRasterDrawing();
+            GenerateGpuDrawing();
         }
 
         private async void OnSourceCodeChanged()
         {
-            if(SourceCode == null)
+            if (SourceCode == null)
             {
                 return;
             }
@@ -142,16 +143,16 @@ namespace SkiaSharpFiddle
             catch (OperationCanceledException)
             {
             }
+            GenerateRasterDrawing();
+            GenerateGpuDrawing();
+        }
 
-            GenerateDrawings();
+        private async void OnShaderChanged()
+        {
+            GenerateGpuDrawing();
         }
 
         private void OnColorCombinationChanged()
-        {
-            GenerateDrawings();
-        }
-
-        public void GenerateDrawings()
         {
             GenerateRasterDrawing();
             GenerateGpuDrawing();
@@ -166,8 +167,6 @@ namespace SkiaSharpFiddle
             {
                 Draw(surface, info);
 
-                //ApplyShader(surface.Canvas);
-
                 RasterDrawing = surface.Snapshot();
             }
 
@@ -176,7 +175,11 @@ namespace SkiaSharpFiddle
 
         private void GenerateGpuDrawing()
         {
-            var old = gpuDrawing;
+            if (RasterDrawing == null)
+            {
+                return;
+            }
+            var old = GpuDrawing;
             var info = ImageInfo;
 
             using (var context = new WglContext())
@@ -188,10 +191,13 @@ namespace SkiaSharpFiddle
                 {
                     var canvas = surface.Canvas;
 
-                    Draw(surface, info);
+                    // Copy snapshot from cpu canvas
+                    canvas.DrawImage(RasterDrawing, SKPoint.Empty);
+
+                    // Apply fragment shader (SKSL)
                     ApplyShader(surface);
 
-                    gpuDrawing = surface.Snapshot().ToRasterImage();
+                    GpuDrawing = surface.Snapshot().ToRasterImage();
                 }
             }
 
@@ -210,6 +216,7 @@ namespace SkiaSharpFiddle
         {
             var canvas = surface.Canvas;
             string errorText = @"";
+            Mode = Mode.Working;
 
             // shader
             try
@@ -232,7 +239,7 @@ namespace SkiaSharpFiddle
                 using var shader = effect.ToShader(true, inputs, children);
 
                 // draw as normal
-                canvas.Clear(SKColors.Black);
+
                 using var paint = new SKPaint { Shader = shader };
                 canvas.DrawRect(SKRect.Create(400, 400), paint);
 
@@ -240,9 +247,11 @@ namespace SkiaSharpFiddle
             }
             catch
             {
-                var result = new CompilationMessage() { 
+                var result = new CompilationMessage()
+                {
                     Message = errorText,
-                    Severity = CompilationMessageSeverity.Error};
+                    Severity = CompilationMessageSeverity.Error
+                };
                 CompilationMessages.Add(result);
 
                 Mode = Mode.Error;
@@ -250,41 +259,6 @@ namespace SkiaSharpFiddle
             }
 
             Mode = Mode.Ready;
-        }
-
-        protected static SKBitmap CreateTestBitmap(byte alpha = 255)
-        {
-            var bmp = new SKBitmap(40, 40);
-            bmp.Erase(SKColors.Transparent);
-
-            using (var canvas = new SKCanvas(bmp))
-            {
-                DrawTestBitmap(canvas, 40, 40, alpha);
-            }
-
-            return bmp;
-        }
-
-        private static void DrawTestBitmap(SKCanvas canvas, int width, int height, byte alpha = 255)
-        {
-            using var paint = new SKPaint();
-
-            var x = width / 2;
-            var y = height / 2;
-
-            canvas.Clear(SKColors.Transparent);
-
-            paint.Color = SKColors.Red.WithAlpha(alpha);
-            canvas.DrawRect(SKRect.Create(0, 0, x, y), paint);
-
-            paint.Color = SKColors.Green.WithAlpha(alpha);
-            canvas.DrawRect(SKRect.Create(x, 0, x, y), paint);
-
-            paint.Color = SKColors.Blue.WithAlpha(alpha);
-            canvas.DrawRect(SKRect.Create(0, y, x, y), paint);
-
-            paint.Color = SKColors.Yellow.WithAlpha(alpha);
-            canvas.DrawRect(SKRect.Create(x, y, x, y), paint);
         }
     }
 }

@@ -28,22 +28,11 @@ namespace SkiaSharpFiddle
             ViewModel.CompilationMessages.CollectionChanged += OnCompilationMessagesChanged;
 
             Observable.FromEventPattern(editor, nameof(editor.TextChanged))
-                .Merge(Observable.FromEventPattern(sksleditor, nameof(sksleditor.TextChanged)))
                 .Select(evt => (evt.Sender as TextEditor)?.Text)
                 .Where(text => !string.IsNullOrWhiteSpace(text))
                 .Throttle(TimeSpan.FromMilliseconds(250))
                 .DistinctUntilChanged()
                 .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
-
-
-            var ticks = Observable.Interval(TimeSpan.FromMilliseconds(100));
-
-            ticks.ObserveOnDispatcher()
-            .Where(_ => IsActive)
-            .Subscribe(_ =>
-            {
-                ViewModel.GenerateDrawings();
-            });
 
             _ = LoadInitialSourceAsync(editor, @$"{typeof(MainWindow).Namespace}.Resources.InitialSource.cs");
 
@@ -70,10 +59,12 @@ namespace SkiaSharpFiddle
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(MainViewModel.RasterDrawing) ||
-                e.PropertyName == nameof(MainViewModel.GpuDrawing))
+            if (e.PropertyName == nameof(MainViewModel.RasterDrawing))
             {
                 preview.InvalidateVisual();
+            }
+            else if (e.PropertyName == nameof(MainViewModel.GpuDrawing) || e.PropertyName == nameof(MainViewModel.ShaderSource))
+            {
                 previewGpu.InvalidateVisual();
             }
             else if (e.PropertyName == nameof(MainViewModel.Mode))
@@ -113,35 +104,25 @@ namespace SkiaSharpFiddle
 
             DrawTransparencyBackground(canvas, width, height, (float)scale);
 
-            if (ViewModel.RasterDrawing != null)
+            // On-screen (CPU) canvas rendering
+            if (ViewModel.RasterDrawing != null && sender.Equals(preview))
+            {
                 canvas.DrawImage(ViewModel.RasterDrawing, 0, 0);
-        }
-
-        private void OnPaintSurfaceGpu(object sender, SKPaintSurfaceEventArgs e)
-        {
-            var scale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
-            var width = e.Info.Width;
-            var height = e.Info.Height;
-
-            var canvas = e.Surface.Canvas;
-
-            canvas.DrawText(@"GPU", 0, 0, new SKPaint());
-
-            canvas.ClipRect(SKRect.Create(ViewModel.DrawingSize));
-
-            DrawTransparencyBackground(canvas, width, height, (float)scale);
-
-            if (ViewModel.GpuDrawing != null)
+            }
+            // Off-screen (GPU) canvas rendering (SKSL Enabled)
+            else if (ViewModel.GpuDrawing != null && sender.Equals(previewGpu))
+            {
                 canvas.DrawImage(ViewModel.GpuDrawing, 0, 0);
-        }
+            }
 
+        }
         private void DrawTransparencyBackground(SKCanvas canvas, int width, int height, float scale)
         {
             var blockSize = BaseBlockSize * scale;
 
-            var offsetMatrix = SKMatrix.MakeScale(2 * blockSize, blockSize);
-            var skewMatrix = SKMatrix.MakeSkew(0.5f, 0);
-            SKMatrix.PreConcat(ref offsetMatrix, ref skewMatrix);
+            var offsetMatrix = SKMatrix.CreateScale(2 * blockSize, blockSize);
+            var skewMatrix = SKMatrix.CreateSkew(0.5f, 0);
+            offsetMatrix = offsetMatrix.PreConcat(skewMatrix);
 
             using (var path = new SKPath())
             using (var paint = new SKPaint())
