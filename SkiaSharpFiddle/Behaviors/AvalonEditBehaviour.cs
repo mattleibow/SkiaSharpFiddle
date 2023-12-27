@@ -8,16 +8,45 @@ namespace SkiaSharpFiddle
     public sealed class AvalonEditBehaviour : Behavior<TextEditor>
     {
         private string m_defaultText = @"
+
 in fragmentProcessor color_map;
 
 uniform float3 iResolution;
 uniform float  iTime;
 
 half4 main(float2 fragCoord) {
-  fragCoord.x += sin(fragCoord.y / 3) * 4;  // Displace each row by up to 4 pixels
-  float2 scale = iResolution.xy / iResolution.xy;
-  half4 image = sample(color_map, fragCoord * scale).bgra;
-  return image;
+
+    // Calculate rotation angle based on time (iTime)
+    float timePerSecond = iTime / 10;
+    float angleSeconds = timePerSecond;
+    float angleMinutes = timePerSecond / 60;
+
+    fragCoord.x -= 128;
+    fragCoord.y -= 128;
+    
+    // Displace each row by up to 4 pixels
+    fragCoord.x += sin(fragCoord.y / 3) * 4;
+    float2 scale = iResolution.xy / iResolution.xy;
+
+    // Get the pixel color from the input image
+    half4 color = sample(color_map, fragCoord * scale);
+
+    // Create a rotation matrix
+    mat2 secondsRotationMatrix = mat2(cos(angleSeconds), -sin(angleSeconds), sin(angleSeconds), cos(angleSeconds));
+    mat2 minutesRotationMatrix = mat2(cos(angleMinutes), -sin(angleMinutes), sin(angleMinutes), cos(angleMinutes));
+
+    // Apply rotation to the coordinates
+    vec2 rotatedCoordsSeconds = secondsRotationMatrix * fragCoord.xy;
+    vec2 rotatedCoordsMinutes = minutesRotationMatrix * fragCoord.xy;
+
+    // Sample the color from the rotated coordinates
+    half4 colorSeconds = sample(color_map, rotatedCoordsSeconds);
+
+    // Sample the color from the rotated coordinates
+    half4 colorMinutes = sample(color_map, rotatedCoordsMinutes);
+
+    // Output the final color
+    return colorSeconds.bgra + colorMinutes.rgba;
 }";
         public static readonly DependencyProperty TextValueProperty =
             DependencyProperty.Register("TextValue", typeof(string), typeof(AvalonEditBehaviour),

@@ -173,12 +173,13 @@ namespace SkiaSharpFiddle
             old?.Dispose();
         }
 
-        private void GenerateGpuDrawing()
+        public void GenerateGpuDrawing()
         {
             if (RasterDrawing == null)
             {
                 return;
             }
+
             var old = GpuDrawing;
             var info = ImageInfo;
 
@@ -225,7 +226,7 @@ namespace SkiaSharpFiddle
                 // input values
 
                 var inputs = new SKRuntimeEffectUniforms(effect);
-                inputs["iResolution"] = new[] { DrawingWidth, drawingHeight, 400f };
+                inputs["iResolution"] = new[] { DrawingWidth, drawingHeight, 1f };
                 inputs["iTime"] = m_StopWatch.ElapsedMilliseconds / 100;
 
                 // shader values

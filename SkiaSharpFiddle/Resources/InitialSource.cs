@@ -11,5 +11,5 @@ void Draw(SKCanvas canvas, int width, int height)
 		StrokeWidth = 10
 	};
 
-	canvas.DrawLine(20, 20, 100, 100, p);
+	canvas.DrawLine(20, 20, width/2, height/2, p);
 }

@@ -34,6 +34,20 @@ namespace SkiaSharpFiddle
                 .DistinctUntilChanged()
                 .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
+            var ticks = Observable.Interval(TimeSpan.FromMilliseconds(100));
+            ticks.ObserveOnDispatcher()
+.Where(_ => IsActive)
+.Subscribe(_ =>
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        ViewModel.GenerateGpuDrawing();
+        //previewGpu.InvalidateVisual();
+    });
+
             _ = LoadInitialSourceAsync(editor, @$"{typeof(MainWindow).Namespace}.Resources.InitialSource.cs");
 
             InitializeEditor(editor);
@@ -63,7 +77,7 @@ namespace SkiaSharpFiddle
             {
                 preview.InvalidateVisual();
             }
-            else if (e.PropertyName == nameof(MainViewModel.GpuDrawing) || e.PropertyName == nameof(MainViewModel.ShaderSource))
+            else if (e.PropertyName == nameof(MainViewModel.GpuDrawing))
             {
                 previewGpu.InvalidateVisual();
             }
