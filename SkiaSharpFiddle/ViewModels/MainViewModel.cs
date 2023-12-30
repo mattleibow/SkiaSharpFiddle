@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Windows.Controls;
 using MvvmHelpers;
 using SkiaSharp;
+using SkiaSharpFiddle.GlContexts;
 
 namespace SkiaSharpFiddle
 {
@@ -12,6 +16,7 @@ namespace SkiaSharpFiddle
         private readonly Compiler compiler = new Compiler();
 
         private string sourceCode;
+        private string shaderSource;
 
         private int drawingWidth = 256;
         private int drawingHeight = 256;
@@ -24,6 +29,7 @@ namespace SkiaSharpFiddle
 
         private CancellationTokenSource cancellation;
         private CompilationResult lastResult;
+        private Stopwatch m_StopWatch = Stopwatch.StartNew();
 
         public MainViewModel()
         {
@@ -63,6 +69,12 @@ namespace SkiaSharpFiddle
         {
             get => sourceCode;
             set => SetProperty(ref sourceCode, value, onChanged: OnSourceCodeChanged);
+        }
+
+        public string ShaderSource
+        {
+            get => shaderSource;
+            set => SetProperty(ref shaderSource, value, onChanged: OnShaderChanged);
         }
 
         public int DrawingWidth
@@ -106,11 +118,17 @@ namespace SkiaSharpFiddle
             OnPropertyChanged(nameof(DrawingSize));
             OnPropertyChanged(nameof(ImageInfo));
 
-            GenerateDrawings();
+            GenerateRasterDrawing();
+            GenerateGpuDrawing();
         }
 
         private async void OnSourceCodeChanged()
         {
+            if (SourceCode == null)
+            {
+                return;
+            }
+
             cancellation?.Cancel();
             cancellation = new CancellationTokenSource();
 
@@ -126,16 +144,16 @@ namespace SkiaSharpFiddle
             catch (OperationCanceledException)
             {
             }
+            GenerateRasterDrawing();
+            GenerateGpuDrawing();
+        }
 
-            GenerateDrawings();
+        private async void OnShaderChanged()
+        {
+            GenerateGpuDrawing();
         }
 
         private void OnColorCombinationChanged()
-        {
-            GenerateDrawings();
-        }
-
-        private void GenerateDrawings()
         {
             GenerateRasterDrawing();
             GenerateGpuDrawing();
@@ -149,15 +167,43 @@ namespace SkiaSharpFiddle
             using (var surface = SKSurface.Create(info))
             {
                 Draw(surface, info);
+
                 RasterDrawing = surface.Snapshot();
             }
 
             old?.Dispose();
         }
 
-        private void GenerateGpuDrawing()
+        public void GenerateGpuDrawing()
         {
-            // TODO: implement offscreen GPU drawing
+            if (RasterDrawing == null)
+            {
+                return;
+            }
+
+            var old = GpuDrawing;
+            var info = ImageInfo;
+
+            using (var context = new WglContext())
+            {
+                context?.MakeCurrent();
+
+                using (var grContext = GRContext.CreateGl())
+                using (var surface = SKSurface.Create(grContext, true, info))
+                {
+                    var canvas = surface.Canvas;
+
+                    // Copy snapshot from cpu canvas
+                    canvas.DrawImage(RasterDrawing, SKPoint.Empty);
+
+                    // Apply fragment shader (SKSL)
+                    ApplyShader(surface);
+
+                    GpuDrawing = surface.Snapshot().ToRasterImage();
+                }
+            }
+
+            old?.Dispose();
         }
 
         private void Draw(SKSurface surface, SKImageInfo info)
@@ -166,6 +212,71 @@ namespace SkiaSharpFiddle
 
             if (messages?.Any() == true)
                 CompilationMessages.ReplaceRange(messages);
+        }
+
+        public void ApplyShader(SKSurface surface)
+        {
+
+            var canvas = surface.Canvas;
+            string errorText = @"";
+            Mode = Mode.Working;
+
+            if (Mode == Mode.Ready)
+            {
+                CompilationMessages.Clear();
+            }
+
+            // shader
+            try
+            {
+                using var effect = SKRuntimeEffect.Create(shaderSource, out errorText);
+                // input values
+
+                var inputs = new SKRuntimeEffectUniforms(effect);
+                inputs["iResolution"] = new[] { DrawingWidth, drawingHeight, 1f };
+                inputs["iTime"] = m_StopWatch.ElapsedMilliseconds / 100;
+
+                // shader values
+                using var snapshotImage = surface.Snapshot().ToRasterImage();
+                using var textureShader = snapshotImage.ToShader();
+
+                var children = new SKRuntimeEffectChildren(effect);
+                children["color_map"] = textureShader;
+
+                // create actual shader
+                using var shader = effect.ToShader(true, inputs, children);
+
+                // draw as normal
+
+                using var paint = new SKPaint { Shader = shader };
+                canvas.DrawRect(SKRect.Create(400, 400), paint);
+            }
+            catch
+            {
+                var uiErrorMessage = @"";
+
+                using (var reader = new StringReader(errorText))
+                {
+                    string message = reader.ReadLine();
+                    uiErrorMessage = message.Replace("error:", "");
+                }
+
+                var result = new CompilationMessage()
+                {
+                    Message = uiErrorMessage,
+                    Severity = CompilationMessageSeverity.Error
+                };
+
+                if (!CompilationMessages.Select(msg => msg.Message).Contains(result.Message))
+                {
+                    CompilationMessages.Add(result);
+                }
+
+                Mode = Mode.Error;
+                return;
+            }
+
+            Mode = Mode.Ready;
         }
     }
 }
