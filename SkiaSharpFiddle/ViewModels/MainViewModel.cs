@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -215,9 +216,15 @@ namespace SkiaSharpFiddle
 
         public void ApplyShader(SKSurface surface)
         {
+
             var canvas = surface.Canvas;
             string errorText = @"";
             Mode = Mode.Working;
+
+            if (Mode == Mode.Ready)
+            {
+                CompilationMessages.Clear();
+            }
 
             // shader
             try
@@ -243,17 +250,27 @@ namespace SkiaSharpFiddle
 
                 using var paint = new SKPaint { Shader = shader };
                 canvas.DrawRect(SKRect.Create(400, 400), paint);
-
-                CompilationMessages.Clear();
             }
             catch
             {
+                var uiErrorMessage = @"";
+
+                using (var reader = new StringReader(errorText))
+                {
+                    string message = reader.ReadLine();
+                    uiErrorMessage = message.Replace("error:", "");
+                }
+
                 var result = new CompilationMessage()
                 {
-                    Message = errorText,
+                    Message = uiErrorMessage,
                     Severity = CompilationMessageSeverity.Error
                 };
-                CompilationMessages.Add(result);
+
+                if (!CompilationMessages.Select(msg => msg.Message).Contains(result.Message))
+                {
+                    CompilationMessages.Add(result);
+                }
 
                 Mode = Mode.Error;
                 return;

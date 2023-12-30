@@ -36,17 +36,15 @@ namespace SkiaSharpFiddle
 
             var ticks = Observable.Interval(TimeSpan.FromMilliseconds(100));
             ticks.ObserveOnDispatcher()
-.Where(_ => IsActive)
-.Subscribe(_ =>
-    {
-        if (!IsActive)
-        {
-            return;
-        }
-
-        ViewModel.GenerateGpuDrawing();
-        //previewGpu.InvalidateVisual();
-    });
+            .Where(_ => IsActive)
+            .Subscribe(_ =>
+            {
+                if (!IsActive)
+                {
+                    return;
+                }
+                ViewModel.GenerateGpuDrawing();
+            });
 
             _ = LoadInitialSourceAsync(editor, @$"{typeof(MainWindow).Namespace}.Resources.InitialSource.cs");
 
