@@ -1,7 +1,5 @@
-# SkiaSharp Fiddle
-
-A SkiaSharp playground - just like https://fiddle.skia.org, but for your own machine!
-
+# SkiaSharp (SKSL) Fiddle
+A SkiaSharp playground - just like https://fiddle.skia.org & https://fiddle.skia.org/, but for your own machine!
 This little app is made using some really awesome open source libraries:
 
  - [SkiaSharp](https://github.com/mono/SkiaSharp) as the drawing library
@@ -9,4 +7,4 @@ This little app is made using some really awesome open source libraries:
  - [Roslyn .NET Compiler](https://github.com/dotnet/roslyn) as the code compiler
  - [Windows Presentation Foundation (WPF)](https://github.com/dotnet/wpf) as the UI framework
 
-![Screenshot](screenshot.png)
+![Screenshot](demo.gif)

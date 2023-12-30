@@ -10,6 +10,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace SkiaSharpFiddle
 {
@@ -33,15 +34,31 @@ namespace SkiaSharpFiddle
                 .DistinctUntilChanged()
                 .Subscribe(source => Dispatcher.BeginInvoke(new Action(() => ViewModel.SourceCode = source)));
 
-            _ = LoadInitialSourceAsync();
+            var ticks = Observable.Interval(TimeSpan.FromMilliseconds(100));
+            ticks.ObserveOnDispatcher()
+            .Where(_ => IsActive)
+            .Subscribe(_ =>
+            {
+                if (!IsActive)
+                {
+                    return;
+                }
+                ViewModel.GenerateGpuDrawing();
+            });
 
-            editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
+            _ = LoadInitialSourceAsync(editor, @$"{typeof(MainWindow).Namespace}.Resources.InitialSource.cs");
 
-            editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
-            editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
+            InitializeEditor(editor);
 
             VisualStateManager.GoToElementState(this, ViewModel.Mode.ToString(), false);
             VisualStateManager.GoToElementState(this, WindowState.ToString(), false);
+        }
+
+        private void InitializeEditor(TextEditor editor)
+        {
+            editor.TextArea.TextView.LineTransformers.Add(new CompilationResultsTransformer(ViewModel));
+            editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Colors.Transparent);
+            editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromRgb(234, 234, 234)), 2);
         }
 
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -54,10 +71,13 @@ namespace SkiaSharpFiddle
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(MainViewModel.RasterDrawing) ||
-                e.PropertyName == nameof(MainViewModel.GpuDrawing))
+            if (e.PropertyName == nameof(MainViewModel.RasterDrawing))
             {
                 preview.InvalidateVisual();
+            }
+            else if (e.PropertyName == nameof(MainViewModel.GpuDrawing))
+            {
+                previewGpu.InvalidateVisual();
             }
             else if (e.PropertyName == nameof(MainViewModel.Mode))
             {
@@ -70,12 +90,10 @@ namespace SkiaSharpFiddle
             editor.TextArea.TextView.Redraw();
         }
 
-        private async Task LoadInitialSourceAsync()
+        private async Task LoadInitialSourceAsync(TextEditor editor, string resource)
         {
             var type = typeof(MainWindow);
             var assembly = type.Assembly;
-
-            var resource = $"{type.Namespace}.Resources.InitialSource.cs";
 
             using (var stream = assembly.GetManifestResourceStream(resource))
             using (var reader = new StreamReader(stream))
@@ -98,17 +116,25 @@ namespace SkiaSharpFiddle
 
             DrawTransparencyBackground(canvas, width, height, (float)scale);
 
-            if (ViewModel.RasterDrawing != null)
+            // On-screen (CPU) canvas rendering
+            if (ViewModel.RasterDrawing != null && sender.Equals(preview))
+            {
                 canvas.DrawImage(ViewModel.RasterDrawing, 0, 0);
-        }
+            }
+            // Off-screen (GPU) canvas rendering (SKSL Enabled)
+            else if (ViewModel.GpuDrawing != null && sender.Equals(previewGpu))
+            {
+                canvas.DrawImage(ViewModel.GpuDrawing, 0, 0);
+            }
 
+        }
         private void DrawTransparencyBackground(SKCanvas canvas, int width, int height, float scale)
         {
             var blockSize = BaseBlockSize * scale;
 
-            var offsetMatrix = SKMatrix.MakeScale(2 * blockSize, blockSize);
-            var skewMatrix = SKMatrix.MakeSkew(0.5f, 0);
-            SKMatrix.PreConcat(ref offsetMatrix, ref skewMatrix);
+            var offsetMatrix = SKMatrix.CreateScale(2 * blockSize, blockSize);
+            var skewMatrix = SKMatrix.CreateSkew(0.5f, 0);
+            offsetMatrix = offsetMatrix.PreConcat(skewMatrix);
 
             using (var path = new SKPath())
             using (var paint = new SKPaint())
